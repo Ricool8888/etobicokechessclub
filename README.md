@@ -2,7 +2,7 @@ When modifying / changing files from claude ensure the following wording is upda
 
 Index page:
       Intro paragraphs
-      Addresses of Goderich Library and Goderich Legion
+      Addresses of Second Cup
       Mailing list card
       Club rules
 
@@ -12,7 +12,7 @@ About us page:
       Person profiles (board of directors)
 
 Posts / news page:
-      Partnership with the Legion annoucement
+      Partnership with the Second Cup
 
 Events calendar page:
       Info paragraph
@@ -20,20 +20,8 @@ Events calendar page:
 Tournaments page:
       Info paragraph
 
-Sponsors page: 
-      Info paragraph
-      Each sponsor's description
-      Ensure community sponsors only have their name, no card or photo
-
-Merch page:
-      Info paragraph
-      Each merch item's description
-
 FAQ page:
       All answers for FAQ questions
-
-Books for sale page:
-      Book titles, author, and prices
 
 How pages work:
 
@@ -63,9 +51,7 @@ How pages work:
 Description of extra pages
       - Robots.txt tells automated web crawlers and search engine bots which pages and files they can or cannot visit on a website.
       - 400.html is a custom error page that a web server displays when a user tries to visit a web page with a broken URL or invalid request
-      - 403.html is a custom error page that a web server displays when a user tries to visit a web page without proper access
       - 404.html is a custom error page that a web server displays when a user tries to visit a web page that does not exist, has been moved, or has a broken link
-      - 500.html is a custom error page that a web server displays when a user tries to visit a web page and the webpage has an internal server error
       - 503.html is a custom error page that a web server displays when a user tries to visit a web page that has active maintenance ongoing
       - sitemap.xml acts as a roadmap for your website. It lists all your important URLs and tells search engines like Google how to find and crawl your content.
       - .nojekyll is an empty configuration file placed in the root directory of a GitHub Pages repository. It tells GitHub to skip running the site through the Jekyll static site generator. This prevents Jekyll from ignoring files or folders that start with an underscore
