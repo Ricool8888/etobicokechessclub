@@ -12,8 +12,8 @@
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Events Calendar - Goderich Chess Club</title>
-<meta name="description" content="See upcoming Goderich Chess Club meetings and special events.">
+<title>Events Calendar - Etobicoke Chess Club</title>
+<meta name="description" content="See upcoming Etobicoke Chess Club meetings and special events.">
 <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
@@ -24,7 +24,7 @@
     <div class="navbar-flex">
       <a href="index.html" class="brand-logo">
         <img src="Goderich Chess Club smaller logo.png" alt="" aria-hidden="true" width="32" height="32" style="height:32px;width:auto;display:inline-block;vertical-align:middle;margin-right:8px;">
-        <span class="gold-text">Goderich Chess Club</span>
+        <span class="gold-text">Etobicoke Chess Club</span>
       </a>
       <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="primaryNav" aria-label="Toggle menu">&#9776;</button>
       <nav class="nav-links" id="primaryNav" aria-label="Main Navigation">
@@ -33,10 +33,7 @@
         <a href="posts and news.html" class="nav-item">Posts / News</a>
         <a href="events calendar.html" class="nav-item active" aria-current="page">Events Calendar</a>
         <a href="tournaments.html" class="nav-item">Tournaments</a>
-        <a href="sponsors.html" class="nav-item">Sponsors</a>
-        <a href="merch.html" class="nav-item">Merch</a>
         <a href="faq.html" class="nav-item">FAQ</a>
-        <a href="books for sale.html" class="nav-item">Books for sale</a>
         <a href="mailto:goderichchessclub@gmail.com" class="btn-join">Contact Us</a>
       </nav>
     </div>
@@ -47,7 +44,7 @@
   <div class="container">
     <div class="page-header">
       <h1 class="page-title">Events <span class="gold-text">Calendar</span></h1>
-      <p class="page-desc">The club meets every Tuesday, 6-8pm, at Goderich Library, and every Friday, 6-9pm, at Goderich Legion. Tournaments, holiday closures, and other one-off events are marked below — click any day for details.</p>
+      <p class="page-desc">The club meets every Friday, 6-9pm, at Second Cup. Tournaments, holiday closures, and other one-off events are marked below — click any day for details.</p>
     </div>
 
     <section class="calendar-wrap" aria-label="Month calendar">
@@ -63,17 +60,12 @@
       <div class="calendar-grid" id="calendarGrid" role="grid"></div>
 
       <div class="legend">
-        <span class="legend-item"><span class="legend-dot legend-dot-tuesday"></span> Tuesday meeting - Goderich Library</span>
-        <span class="legend-item"><span class="legend-dot legend-dot-friday"></span> Friday meeting - Goderich Legion</span>
+        <span class="legend-item"><span class="legend-dot legend-dot-friday"></span> Friday meeting</span>
         <span class="legend-item"><span class="legend-dot legend-dot-special"></span> Special event</span>
       </div>
     </section>
 
     <div class="add-to-calendar-row">
-      <button type="button" class="btn-calendar" id="addTuesdayBtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-        Add Tuesday Meeting to Calendar
-      </button>
       <button type="button" class="btn-calendar" id="addFridayBtn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
         Add Friday Meeting to Calendar
@@ -108,7 +100,7 @@
       <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
       <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
-    <p>&copy; 2026 Goderich Chess Club Inc. All rights reserved.  Incorporated in Ontario, Canada.<br>
+    <p>&copy; 2026 Etobicoke Chess Club Inc. All rights reserved.  Incorporated in Ontario, Canada.<br>
     Affiliated Platforms: <a href="https://www.chess.ca/en/">CFC</a> &bull; <a href="https://www.fide.com/">FIDE</a></p>
     <p class="last-updated">Last updated: <span id="lastUpdatedText">July 28, 2026</span></p>
   </div>
@@ -129,30 +121,18 @@
 <script src="assets/ics.js"></script>
 <script src="assets/calendar.js"></script>
 <script>
-  document.getElementById("addTuesdayBtn").addEventListener("click", function () {
-    GCCCalendar.downloadICS({
-      uid: "recurring-tuesday-library",
-      title: "Weekly Club Meeting",
-      description: "Open play at Goderich Library. All skill levels welcome, free admission.",
-      location: "Goderich Library, 52 Montreal St, Goderich, ON N7A 2G4",
-      startDate: "2026-01-20",
-      startTime: "18:00",
-      endTime: "20:00",
-      rrule: "FREQ=WEEKLY;BYDAY=TU"
-    }, "goderich-chess-club-tuesday-meeting.ics");
-  });
 
   document.getElementById("addFridayBtn").addEventListener("click", function () {
     GCCCalendar.downloadICS({
       uid: "recurring-friday-legion",
       title: "Weekly Club Meeting",
-      description: "Open play at Goderich Legion. All skill levels welcome, free admission.",
-      location: "Goderich Legion, 56 Kingston St, Goderich, ON N7A 3K5",
+      description: "Open play at Second Cup. All skill levels welcome, free admission.",
+      location: "Second Cup, 265 Wincott Dr, Etobicoke, ON, M9A 2T2",
       startDate: "2026-07-24",
       startTime: "18:00",
       endTime: "21:00",
       rrule: "FREQ=WEEKLY;BYDAY=FR"
-    }, "goderich-chess-club-friday-meeting.ics");
+    }, "etobicoke-chess-club-friday-meeting.ics");
   });
 </script>
 <script src="assets/theme.js"></script>
