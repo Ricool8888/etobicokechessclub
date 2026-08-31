@@ -28,15 +28,37 @@
     "resultsUrl": "https://s2.chess-results.com/tnr1193491.aspx?lan=1"
   },
   {
+    "id": "trn-Etobicoke-Rapid-Rhino-Open",
+    "status": "completed",
+    "date": "2025-03-29",
+    "title": "Etobicoke Rapid Rhino Open",
+    "format": "5 rounds \u00b7 Swiss \u00b7 CFC Rated",
+    "location": "399 The West Mall, Etobicoke, ON M9C 2Y2",
+    "entryFee": "CFC Membership",
+    "description": "One of our many tournaments",
+    "resultsUrl": "https://s2.chess-results.com/tnr1146516.aspx?lan=1"
+  },
+  {
     "id": "trn-Etobicoke-Raptor-Claw-Rapid-Open",
     "status": "completed",
-    "date": "2024-08-03 & 2024-08-04",
+    "date": "2024-08-03",
     "title": "Etobicoke Raptor Claw Rapid Open",
     "format": "5 rounds \u00b7 Swiss \u00b7 CFC Rated",
     "location": "399 The West Mall, Etobicoke, ON M9C 2Y2",
     "entryFee": "CFC Membership",
     "description": "One of our many tournaments",
     "resultsUrl": "https://s2.chess-results.com/tnr969215.aspx?lan=1"
+  },
+  {
+    "id": "trn-Etobicoke-Copperhead-Open",
+    "status": "completed",
+    "date": "2024-05-11",
+    "title": "Etobicoke Copperhead Open",
+    "format": "5 rounds \u00b7 Swiss \u00b7 CFC Rated",
+    "location": "399 The West Mall, Etobicoke, ON M9C 2Y2",
+    "entryFee": "CFC Membership",
+    "description": "One of our many tournaments",
+    "resultsUrl": "https://s2.chess-results.com/tnr936978.aspx?lan=1"
   },
   {
     "id": "trn-Etobicoke-Sidewinder-FIDE-Open",
@@ -52,7 +74,7 @@
   {
     "id": "trn-Etobicoke-Hammerhead-Open",
     "status": "completed",
-    "date": "2023-11-18 & 2023-11-19",
+    "date": "2023-11-18",
     "title": "Etobicoke Hammerhead Open",
     "format": "5 rounds \u00b7 Swiss \u00b7 CFC Rated",
     "location": "399 The West Mall, Etobicoke, ON M9C 2Y2",
@@ -61,36 +83,14 @@
     "resultsUrl": "https://s2.chess-results.com/tnr850820.aspx?lan=1"
   },
   {
-    "id": "trn-Etobicoke-Copperhead-Open",
-    "status": "completed",
-    "date": "2024-05-11 & 2024-05-12",
-    "title": "Etobicoke Copperhead Open",
-    "format": "5 rounds \u00b7 Swiss \u00b7 CFC Rated",
-    "location": "399 The West Mall, Etobicoke, ON M9C 2Y2",
-    "entryFee": "CFC Membership",
-    "description": "One of our many tournaments",
-    "resultsUrl": "https://s2.chess-results.com/tnr936978.aspx?lan=1"
-  },
-  {
     "id": "trn-Etobicoke-Sabertooth-Open",
     "status": "completed",
-    "date": "2023-08-19 & 2024-08-20",
+    "date": "2023-08-19",
     "title": "Etobicoke Sabertooth Open",
     "format": "5 rounds \u00b7 Swiss \u00b7 CFC Rated",
     "location": "399 The West Mall, Etobicoke, ON M9C 2Y2",
     "entryFee": "CFC Membership",
     "description": "One of our many tournaments",
     "resultsUrl": "https://s2.chess-results.com/tnr807974.aspx?lan=1"
-  },
-  {
-    "id": "trn-Etobicoke-Rapid-Rhino-Open",
-    "status": "completed",
-    "date": "2023-03-29",
-    "title": "Etobicoke Rapid Rhino Open",
-    "format": "5 rounds \u00b7 Swiss \u00b7 CFC Rated",
-    "location": "399 The West Mall, Etobicoke, ON M9C 2Y2",
-    "entryFee": "CFC Membership",
-    "description": "One of our many tournaments",
-    "resultsUrl": "https://s2.chess-results.com/tnr1146516.aspx?lan=1"
   }
 ]
