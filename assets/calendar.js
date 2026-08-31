@@ -6,22 +6,13 @@
 
   var RECURRING_EVENTS = [
     {
-      id: "recurring-tuesday-library",
-      dayOfWeek: 2,
-      startDate: null,
-      cssClass: "recurring",
-      time: "6:00 PM - 8:00 PM",
-      title: "Weekly Club Meeting",
-      description: "Open play at Goderich Library. All skill levels welcome, free admission."
-    },
-    {
       id: "recurring-friday-legion",
       dayOfWeek: 5,
       startDate: "2026-07-24",
       cssClass: "recurring-alt",
       time: "6:00 PM - 9:00 PM",
       title: "Weekly Club Meeting",
-      description: "Open play at Goderich Legion. All skill levels welcome, free admission."
+      description: "Open play at Second Cup. All skill levels welcome, free admission."
     }
   ];
 
