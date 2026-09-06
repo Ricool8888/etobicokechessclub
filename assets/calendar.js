@@ -11,7 +11,7 @@
       startDate: "2026-07-24",
       cssClass: "recurring-alt",
       time: "6:00 PM - 9:00 PM",
-      title: "Weekly Club Meeting",
+      title: "Chess Night",
       description: "Open play at Second Cup. All skill levels welcome, free admission."
     }
   ];
