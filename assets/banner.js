@@ -1,31 +1,35 @@
 (function () {
   "use strict";
 
-  var DISMISS_KEY = "gcc-dismissed-banners";
-
-  function getDismissedIds() {
-    try {
-      var raw = window.localStorage.getItem(DISMISS_KEY);
-      var parsed = raw ? JSON.parse(raw) : [];
-      return Array.isArray(parsed) ? parsed : [];
-    } catch (e) {
-      return [];
-    }
-  }
-
-  function wasDismissed(id) {
-    return getDismissedIds().indexOf(id) !== -1;
-  }
-
-  function markDismissed(id) {
-    try {
-      var ids = getDismissedIds();
-      if (ids.indexOf(id) === -1) ids.push(id);
-      window.localStorage.setItem(DISMISS_KEY, JSON.stringify(ids));
-    } catch (e) { /* storage unavailable, ignore */ }
-  }
+  var PAUSE_KEY = "gcc-countdown-paused";
+  var PAUSE_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>';
+  var PLAY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
 
   function pad(n) { return n < 10 ? "0" + n : "" + n; }
+
+  // The visitor's pause choice is remembered across pages. With no stored
+  // choice, the countdown starts paused for visitors who ask for reduced motion.
+  function isPaused() {
+    var stored = null;
+    try { stored = window.localStorage.getItem(PAUSE_KEY); } catch (e) { /* storage unavailable */ }
+    if (stored !== null) return stored === "true";
+    return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }
+
+  function storePaused(paused) {
+    try { window.localStorage.setItem(PAUSE_KEY, paused ? "true" : "false"); } catch (e) { /* storage unavailable */ }
+  }
+
+  function plural(n, unit) { return n + " " + unit + (n === 1 ? "" : "s"); }
+
+  // What a paused countdown shows: the time left, rounded down, with no seconds
+  // so it doesn't look like a clock that has stopped.
+  function formatStatic(msRemaining) {
+    var totalMinutes = Math.max(0, Math.floor(msRemaining / 60000));
+    if (totalMinutes >= 1440) return plural(Math.floor(totalMinutes / 1440), "day");
+    if (totalMinutes >= 60) return plural(Math.floor(totalMinutes / 60), "hour");
+    return plural(totalMinutes, "minute");
+  }
 
   function formatCountdown(msRemaining) {
     var totalSeconds = Math.max(0, Math.floor(msRemaining / 1000));
@@ -40,15 +44,15 @@
     return pad(hours) + "h " + pad(minutes) + "m " + pad(seconds) + "s";
   }
 
-  // Renders exactly one banner. Each call has its own local
-  // countdown-interval variable, so multiple banners with their own
-  // countdowns never interfere with each other's timers or dismiss state.
+  // Renders exactly one banner. Banners are permanent (no dismiss control) -
+  // the only way a banner disappears is if its own countdown expires, or
+  // you set "enabled": false / remove it from banner.json.
   function renderOne(data, mount) {
     if (!data || !data.enabled) return;
     if (!data.id || !data.message) return;
-    if (wasDismissed(data.id)) return;
 
     var deadline = null;
+    var pauseBtn = null;
     if (data.countdown && data.countdown.enabled && data.countdown.deadlineUTC) {
       deadline = new Date(data.countdown.deadlineUTC);
       // Auto-expire: once the deadline has passed, don't show this banner
@@ -68,24 +72,41 @@
     text.textContent = data.message;
     bar.appendChild(text);
 
-    var localInterval = null;
-
     if (deadline) {
       var countdownEl = document.createElement("span");
       countdownEl.className = "site-banner-countdown";
       countdownEl.setAttribute("aria-live", "off");
-      countdownEl.textContent = formatCountdown(deadline.getTime() - Date.now());
       bar.appendChild(countdownEl);
 
-      localInterval = setInterval(function () {
+      pauseBtn = document.createElement("button");
+      pauseBtn.type = "button";
+      pauseBtn.className = "site-banner-pause";
+
+      var paused = isPaused();
+      var update = function () {
         var remaining = deadline.getTime() - Date.now();
         if (remaining <= 0) {
           clearInterval(localInterval);
           bar.remove();
           return;
         }
-        countdownEl.textContent = formatCountdown(remaining);
-      }, 1000);
+        // Paused: the text only changes when the page is next loaded.
+        if (!paused) countdownEl.textContent = formatCountdown(remaining);
+      };
+      var showState = function () {
+        var remaining = deadline.getTime() - Date.now();
+        countdownEl.textContent = paused ? formatStatic(remaining) : formatCountdown(remaining);
+        pauseBtn.innerHTML = paused ? PLAY_ICON : PAUSE_ICON;
+        pauseBtn.setAttribute("aria-label", paused ? "Resume countdown" : "Pause countdown");
+        pauseBtn.title = paused ? "Resume countdown" : "Pause countdown";
+      };
+      pauseBtn.addEventListener("click", function () {
+        paused = !paused;
+        storePaused(paused);
+        showState();
+      });
+      showState();
+      var localInterval = setInterval(update, 1000);
     }
 
     if (data.linkUrl && data.linkText) {
@@ -96,17 +117,7 @@
       bar.appendChild(link);
     }
 
-    var closeBtn = document.createElement("button");
-    closeBtn.type = "button";
-    closeBtn.className = "site-banner-close";
-    closeBtn.setAttribute("aria-label", "Dismiss announcement");
-    closeBtn.innerHTML = "&times;";
-    closeBtn.addEventListener("click", function () {
-      markDismissed(data.id);
-      if (localInterval) clearInterval(localInterval);
-      bar.remove();
-    });
-    bar.appendChild(closeBtn);
+    if (pauseBtn) bar.appendChild(pauseBtn);
 
     mount.appendChild(bar);
   }
