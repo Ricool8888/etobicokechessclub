@@ -43,10 +43,10 @@
     var lines = [
       "BEGIN:VCALENDAR",
       "VERSION:2.0",
-      "PRODID:-//Goderich Chess Club//Events//EN",
+      "PRODID:-//Etobicoke Chess Club//Events//EN",
       "CALSCALE:GREGORIAN",
       "BEGIN:VEVENT",
-      "UID:" + opts.uid + "@goderichchessclub.github.io",
+      "UID:" + opts.uid + "@etobicokechessclub",
       "DTSTAMP:" + nowStamp(),
       "DTSTART:" + dtStart,
       "DTEND:" + dtEnd

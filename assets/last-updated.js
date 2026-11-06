@@ -3,7 +3,7 @@
 
   // Update these if the repo ever moves to a different owner/name.
   var REPO_OWNER = "Ricool8888";
-  var REPO_NAME = "goderichchessclub.github.io";
+  var REPO_NAME = "etobicokechessclub";
 
   var MONTH_NAMES = ["January", "February", "March", "April", "May", "June",
     "July", "August", "September", "October", "November", "December"];

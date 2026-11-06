@@ -10,7 +10,7 @@
   };
 
   function fetchTournaments() {
-    return fetch("/assets/tournaments.json")
+    return fetch("assets/tournaments.json")
       .then(function (res) { if (!res.ok) throw new Error("no tournaments file"); return res.json(); })
       .catch(function () { return []; });
   }

@@ -4,24 +4,18 @@
   var MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
   var WEEKDAYS = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
+  // The club meets every Friday. To add another weekly meeting, add an
+  // entry here (dayOfWeek: 0 = Sunday ... 6 = Saturday). cssClass
+  // "recurring-alt" is the Friday colour; "recurring" is the alternate one.
   var RECURRING_EVENTS = [
     {
-      id: "recurring-tuesday-library",
-      dayOfWeek: 2,
-      startDate: null,
-      cssClass: "recurring",
-      time: "6:00 PM - 8:00 PM",
-      title: "Weekly Club Meeting",
-      description: "Open play at Goderich Library. All skill levels welcome, free admission."
-    },
-    {
-      id: "recurring-friday-legion",
+      id: "recurring-friday-second-cup",
       dayOfWeek: 5,
-      startDate: "2026-07-24",
+      startDate: null,
       cssClass: "recurring-alt",
       time: "6:00 PM - 9:00 PM",
       title: "Weekly Club Meeting",
-      description: "Open play at Goderich Legion. All skill levels welcome, free admission."
+      description: "Open play at Second Cup, 265 Wincott Dr, Etobicoke. All skill levels welcome, free admission."
     }
   ];
 
@@ -77,11 +71,14 @@
     var label = document.getElementById("calendarMonthLabel");
     label.textContent = MONTH_NAMES[state.viewMonth] + " " + state.viewYear;
 
-    var isList = state.view === "list";
+    var listEl = document.getElementById("calendarList");
+    var isList = state.view === "list" && !!listEl;
+    var monthBtn = document.getElementById("monthViewBtn");
+    var listBtn = document.getElementById("listViewBtn");
     document.getElementById("calendarGrid").hidden = isList;
-    document.getElementById("calendarList").hidden = !isList;
-    document.getElementById("monthViewBtn").setAttribute("aria-pressed", isList ? "false" : "true");
-    document.getElementById("listViewBtn").setAttribute("aria-pressed", isList ? "true" : "false");
+    if (listEl) listEl.hidden = !isList;
+    if (monthBtn) monthBtn.setAttribute("aria-pressed", isList ? "false" : "true");
+    if (listBtn) listBtn.setAttribute("aria-pressed", isList ? "true" : "false");
 
     if (isList) renderList(); else renderGrid();
   }
@@ -288,15 +285,18 @@
       state.viewMonth = now.getMonth();
       render();
     });
-    document.getElementById("monthViewBtn").addEventListener("click", function () { setView("month"); });
-    document.getElementById("listViewBtn").addEventListener("click", function () { setView("list"); });
+    var monthBtn = document.getElementById("monthViewBtn");
+    var listBtn = document.getElementById("listViewBtn");
+    if (monthBtn) monthBtn.addEventListener("click", function () { setView("month"); });
+    if (listBtn) listBtn.addEventListener("click", function () { setView("list"); });
     document.getElementById("modalCloseBtn").addEventListener("click", closeDayModal);
     document.getElementById("dayModalOverlay").addEventListener("click", function (e) {
       if (e.target === this) closeDayModal();
     });
 
+    render();
     fetchPublishedEvents().then(function (events) {
-      state.publishedEvents = events;
+      state.publishedEvents = Array.isArray(events) ? events : [];
       render();
     });
   }
