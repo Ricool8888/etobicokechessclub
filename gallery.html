@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  (function () {
+    try {
+      if (localStorage.getItem("gcc-theme") === "light") {
+        document.documentElement.setAttribute("data-theme", "light");
+      }
+    } catch (e) {}
+  })();
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Photo Gallery - Etobicoke Chess Club</title>
+<meta name="description" content="Photos from Etobicoke Chess Club meetings, tournaments, and events.">
+<link rel="canonical" href="https://ricool8888.github.io/etobicokechessclub/gallery">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="192x192" href="assets/logos/favicon-192.png">
+<link rel="apple-touch-icon" href="assets/logos/apple-touch-icon.png">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a href="#main-content" class="sr-only">Skip to main content</a>
+
+<header class="site-header">
+  <div class="container">
+    <div class="navbar-flex">
+      <a href="./" class="brand-logo">
+        <img src="assets/logos/ECC_logo.jpg" alt="" aria-hidden="true" width="32" height="32" style="height:32px;width:auto;display:inline-block;vertical-align:middle;margin-right:8px;">
+        <span class="gold-text">Etobicoke Chess Club</span>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="primaryNav" aria-label="Toggle menu">&#9776;</button>
+      <nav class="nav-links" id="primaryNav" aria-label="Main Navigation">
+        <a href="./" class="nav-item">Home</a>
+        <a href="about" class="nav-item">About Us</a>
+        <a href="posts-and-news" class="nav-item">Posts / News</a>
+        <a href="events-calendar" class="nav-item">Events Calendar</a>
+        <a href="tournaments" class="nav-item">Tournaments</a>
+        <a href="gallery" class="nav-item active" aria-current="page">Gallery</a>
+        <a href="faq" class="nav-item">FAQ</a>
+        <a href="mailto:etobicokechessclub@gmail.com" class="btn-join">Contact Us</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<main id="main-content">
+  <div class="container">
+    <div class="page-header">
+      <h1 class="page-title">Photo <span class="gold-text">Gallery</span></h1>
+      <p class="page-desc">Moments from club meetings, tournaments, and events. Click any photo to view it larger.</p>
+    </div>
+
+    <!-- =====================================================================
+         HOW TO ADD PHOTOS TO THIS GALLERY
+         =====================================================================
+         This gallery is data-driven, same idea as events.json / posts.json /
+         tournaments.json elsewhere on this site. Photos are grouped into
+         SECTIONS - each section gets its own heading (e.g. a tournament
+         name) followed by its own row of photos underneath it.
+
+         There are TWO steps to add a new photo - you need to do BOTH or it
+         won't show up:
+
+         STEP 1 - Upload the actual image file
+         ---------------------------------------
+         Put the photo file inside:  assets/gallery/
+         (There's a README.txt in that folder with naming tips too.)
+
+         Keep the file reasonably small for the web (ideally under
+         1-2MB) so the gallery page loads quickly, especially on mobile.
+
+         STEP 2 - Add an entry for it in assets/gallery.json
+         ---------------------------------------------------
+         Open assets/gallery.json. The file is a list of SECTIONS, and each
+         section has a "title" and its own "photos" list, like this:
+
+         [
+           {
+             "id": "section-001",
+             "title": "Summer 2026 Tournament",
+             "photos": [
+               {
+                 "id": "photo-001",
+                 "filename": "summer-2026-01.jpg",
+                 "caption": "A short caption shown under the photo",
+                 "alt": "A plain-language description for screen readers"
+               }
+             ]
+           },
+           {
+             "id": "section-002",
+             "title": "Fall 2026 Tournament",
+             "photos": [
+               { "id": "photo-002", "filename": "fall-2026-01.jpg", "caption": "", "alt": "..." }
+             ]
+           }
+         ]
+
+         TO ADD A NEW PHOTO TO AN EXISTING TOURNAMENT/SECTION:
+         Just add another object to that section's "photos" list, with a
+         comma after the previous photo entry.
+
+         TO ADD A WHOLE NEW TOURNAMENT/SECTION:
+         Copy an entire { "id": ..., "title": ..., "photos": [...] } block
+         and add it to the outer list, with a comma after the previous
+         section's closing "}".
+
+         Notes:
+         - "id" values just need to be unique - increment the number each
+           time (section-001, section-002, ... and photo-001, photo-002, ...
+           the photo numbering can just keep counting up site-wide, it
+           doesn't need to restart for each section).
+         - "filename" must exactly match the file you uploaded in Step 1,
+           including capitalization.
+         - "caption" is optional (shows on hover and in the enlarged view) -
+           you can leave it as an empty string "" if you don't want one.
+         - "alt" should describe the photo for visually impaired visitors
+           and for search engines - a few words is enough.
+         - JSON needs a comma after every entry except the very last one in
+           each list. If the gallery stops showing photos after an edit,
+           this is the most common cause - paste the file into
+           jsonlint.com to check for a missing/extra comma.
+
+         gallery.json starts out empty ([]) - the page shows a "no photos
+         yet" message until the first section is added.
+         ===================================================================== -->
+
+    <div id="galleryContainer">
+      <div class="empty-state">Loading photos&hellip;</div>
+    </div>
+
+    <div class="social-container">
+      <a href="https://www.facebook.com/EtobicokeChessClub/" target="_blank" rel="noopener noreferrer" class="social-btn facebook" aria-label="Visit Facebook">
+        <span class="social-icon" aria-hidden="true"></span>
+      </a>
+      <a href="https://www.instagram.com/etobicokechessclub/" target="_blank" rel="noopener noreferrer" class="social-btn instagram" aria-label="Visit Instagram">
+        <span class="social-icon" aria-hidden="true"></span>
+      </a>
+      <a href="https://www.chess.com/club/etobicoke-chess-club" target="_blank" rel="noopener noreferrer" class="social-btn chess" aria-label="Visit Chess.com">
+        <span class="social-icon" aria-hidden="true"></span>
+      </a>
+      <button type="button" class="social-btn share" aria-label="Share this page" aria-haspopup="true" aria-expanded="false">
+        <span class="social-icon" aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <button type="button" id="themeToggle" class="theme-toggle" aria-label="Toggle light and dark mode" aria-pressed="false">
+      <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+    <p>&copy; 2026 Etobicoke Chess Club Inc. All rights reserved.  Incorporated federally in Canada.<br>
+    Affiliated Platforms: <a href="https://www.chess.ca/en/">CFC</a> &bull; <a href="https://www.fide.com/">FIDE</a></p>
+    <p class="last-updated">Last updated: <span id="lastUpdatedText">July 28, 2026</span></p>
+  </div>
+</footer>
+
+<!-- Lightbox for viewing a photo enlarged -->
+<div class="lightbox-overlay" id="lightboxOverlay" aria-hidden="true">
+  <button type="button" class="lightbox-close" id="lightboxCloseBtn" aria-label="Close">&times;</button>
+  <div class="lightbox-content">
+    <img id="lightboxImage" src="" alt="">
+    <p class="lightbox-caption" id="lightboxCaption"></p>
+  </div>
+</div>
+
+<script src="assets/theme.js"></script>
+<script src="assets/share.js"></script>
+<script src="assets/last-updated.js"></script>
+<script src="assets/gallery.js"></script>
+<script>
+  var navToggle = document.getElementById('navToggle');
+  var primaryNav = document.getElementById('primaryNav');
+  navToggle.addEventListener('click', function () {
+    var isOpen = primaryNav.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', isOpen);
+  });
+</script>
+</body>
+</html>
