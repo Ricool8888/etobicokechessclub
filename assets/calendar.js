@@ -25,12 +25,7 @@
     viewYear: new Date().getFullYear(),
     viewMonth: new Date().getMonth(),
     view: initialView(),
-    publishedEvents: [],
-    // "YYYY-MM-DD" -> reason, for days the club is closed (events.json
-    // entries with "closed": true).
-    closures: {},
-    // Which day button in the month grid is in the tab order.
-    gridFocusIso: null
+    publishedEvents: []
   };
 
   // A visitor's last choice wins; otherwise small screens start in list
@@ -60,29 +55,11 @@
       .catch(function () { return []; });
   }
 
-  // A closure is an event marked "closed": true. It hides the weekly meeting
-  // on that date and draws the day with an X.
-  function closuresFrom(events) {
-    var map = {};
-    (events || []).forEach(function (e) {
-      if (!e || !e.closed || !e.date) return;
-      map[e.date] = e.description || e.title || "Club closed";
-    });
-    return map;
-  }
-
   function eventsForDate(iso) {
-    return state.publishedEvents.filter(function (e) { return e.date === iso && !e.closed; });
-  }
-
-  function closureForDate(iso) {
-    return state.closures[iso] || null;
+    return state.publishedEvents.filter(function (e) { return e.date === iso; });
   }
 
   function recurringEventsForDate(iso, dayOfWeek) {
-    // A closure overrides the weekly meeting, so the calendar never
-    // advertises a club night on a day the club is closed.
-    if (state.closures[iso]) return [];
     return RECURRING_EVENTS.filter(function (r) {
       if (r.dayOfWeek !== dayOfWeek) return false;
       if (r.startDate && iso < r.startDate) return false;
@@ -109,76 +86,39 @@
   function renderGrid() {
     var grid = document.getElementById("calendarGrid");
     grid.innerHTML = "";
-    grid.setAttribute("aria-labelledby", "calendarMonthLabel");
-
-    // Rows exist so the grid has the row/cell structure the ARIA grid
-    // pattern (and the arrow-key movement below) relies on.
-    function addRow() {
-      var row = document.createElement("div");
-      row.className = "calendar-row";
-      row.setAttribute("role", "row");
-      grid.appendChild(row);
-      return row;
-    }
-
-    function emptyCell() {
-      var cell = document.createElement("div");
-      cell.className = "calendar-empty-cell";
-      cell.setAttribute("role", "gridcell");
-      return cell;
-    }
-
-    var headerRow = addRow();
     WEEKDAYS.forEach(function (w) {
       var el = document.createElement("div");
       el.className = "calendar-weekday";
-      el.setAttribute("role", "columnheader");
       el.textContent = w;
-      headerRow.appendChild(el);
+      grid.appendChild(el);
     });
 
     var firstDay = new Date(state.viewYear, state.viewMonth, 1).getDay();
     var daysInMonth = new Date(state.viewYear, state.viewMonth + 1, 0).getDate();
     var today = new Date();
     var todayISO = toISODate(today.getFullYear(), today.getMonth(), today.getDate());
-    var monthPrefix = state.viewYear + "-" + pad(state.viewMonth + 1) + "-";
-
-    // Only one day button is in the tab order; the arrow keys move from it,
-    // as the ARIA grid pattern expects. Start on today, or on the first of
-    // the month when today is in a different month.
-    if (!state.gridFocusIso || state.gridFocusIso.indexOf(monthPrefix) !== 0) {
-      state.gridFocusIso = todayISO.indexOf(monthPrefix) === 0 ? todayISO : monthPrefix + "01";
-    }
-
-    var week = addRow();
 
     for (var i = 0; i < firstDay; i++) {
-      week.appendChild(emptyCell());
+      var empty = document.createElement("div");
+      empty.className = "calendar-day empty";
+      grid.appendChild(empty);
     }
 
     for (var d = 1; d <= daysInMonth; d++) {
-      if (week.children.length === 7) week = addRow();
-
       var iso = toISODate(state.viewYear, state.viewMonth, d);
       var dayOfWeek = new Date(state.viewYear, state.viewMonth, d).getDay();
       var btn = document.createElement("button");
       btn.type = "button";
       btn.className = "calendar-day";
-      btn.dataset.iso = iso;
-      btn.tabIndex = iso === state.gridFocusIso ? 0 : -1;
       if (iso === todayISO) btn.classList.add("today");
 
       var dayEvents = eventsForDate(iso);
       var recurring = recurringEventsForDate(iso, dayOfWeek);
-      var closure = closureForDate(iso);
-      if (dayEvents.length || recurring.length || closure) btn.classList.add("has-event");
+      if (dayEvents.length || recurring.length) btn.classList.add("has-event");
 
-      // A closure outranks everything else: an X on that day, and no weekly
-      // meeting chip. Other special events take visual priority over a
+      // Special events (from events.json) take visual priority over a
       // recurring weekly meeting if a day happens to have both.
-      if (closure) {
-        btn.classList.add("day-closed");
-      } else if (dayEvents.length) {
+      if (dayEvents.length) {
         btn.classList.add("day-special-event");
       } else if (recurring.some(function (r) { return r.cssClass === "recurring"; })) {
         btn.classList.add("day-tuesday-meeting");
@@ -205,15 +145,7 @@
         btn.appendChild(dot);
       });
 
-      if (closure) {
-        var closedDot = document.createElement("span");
-        closedDot.className = "day-event-dot closed";
-        closedDot.textContent = "Club closed - " + closure.toLowerCase();
-        btn.appendChild(closedDot);
-      }
-
       var ariaLabel = MONTH_NAMES[state.viewMonth] + " " + d;
-      if (closure) ariaLabel += ", club closed, " + closure.toLowerCase();
       if (recurring.length) ariaLabel += ", " + recurring.map(function (r) { return r.title; }).join(", ");
       if (dayEvents.length) ariaLabel += ", " + dayEvents.length + " event(s)";
       btn.setAttribute("aria-label", ariaLabel);
@@ -222,23 +154,8 @@
         return function () { openDayModal(isoDate, dow); };
       }(iso, dayOfWeek));
 
-      var cell = document.createElement("div");
-      cell.setAttribute("role", "gridcell");
-      cell.appendChild(btn);
-      week.appendChild(cell);
+      grid.appendChild(btn);
     }
-
-    // Complete the last week so every row has seven cells.
-    while (week.children.length < 7) week.appendChild(emptyCell());
-  }
-
-  // Move the single tab stop to the given day button.
-  function focusGridDay(btn) {
-    var buttons = document.querySelectorAll("#calendarGrid .calendar-day");
-    for (var i = 0; i < buttons.length; i++) buttons[i].tabIndex = -1;
-    btn.tabIndex = 0;
-    state.gridFocusIso = btn.dataset.iso;
-    btn.focus();
   }
 
   // List view: every day in the shown month that has something on, starting
@@ -257,8 +174,7 @@
       var dateObj = new Date(state.viewYear, state.viewMonth, d);
       var recurring = recurringEventsForDate(iso, dateObj.getDay());
       var dayEvents = eventsForDate(iso);
-      var closure = closureForDate(iso);
-      if (!recurring.length && !dayEvents.length && !closure) continue;
+      if (!recurring.length && !dayEvents.length) continue;
 
       var day = document.createElement("section");
       day.className = "calendar-list-day";
@@ -279,13 +195,6 @@
         day.appendChild(buildListItem(r, r.cssClass === "recurring" ? "tuesday" : "friday"));
       });
       dayEvents.forEach(function (ev) { day.appendChild(buildListItem(ev, "special")); });
-      if (closure) {
-        day.appendChild(buildListItem({
-          time: "",
-          title: "Club closed",
-          description: closure.charAt(0) + closure.slice(1).toLowerCase() + " - the club is not meeting this day."
-        }, "closed"));
-      }
 
       list.appendChild(day);
     }
@@ -311,9 +220,6 @@
     return item;
   }
 
-  // The day button that opened the modal, so focus can go back to it on close.
-  var dayModalReturnFocus = null;
-
   function openDayModal(iso, dayOfWeek) {
     var overlay = document.getElementById("dayModalOverlay");
     var titleEl = document.getElementById("dayModalTitle");
@@ -324,31 +230,18 @@
 
     listEl.innerHTML = "";
     var recurring = recurringEventsForDate(iso, dayOfWeek);
-    var closure = closureForDate(iso);
     recurring.forEach(function (r) { listEl.appendChild(buildEventItem(r)); });
     eventsForDate(iso).forEach(function (ev) { listEl.appendChild(buildEventItem(ev)); });
 
-    if (closure) {
-      var closedNote = document.createElement("p");
-      closedNote.className = "muted-note";
-      closedNote.textContent = "Club closed - " + closure + ". No meeting on this day.";
-      listEl.appendChild(closedNote);
-    } else if (!recurring.length && eventsForDate(iso).length === 0) {
+    if (!recurring.length && eventsForDate(iso).length === 0) {
       var p = document.createElement("p");
       p.className = "muted-note";
       p.textContent = "No events scheduled for this day.";
       listEl.appendChild(p);
     }
 
-    dayModalReturnFocus = document.activeElement;
-
     overlay.classList.add("open");
     overlay.setAttribute("aria-hidden", "false");
-
-    // Move focus into the dialog, otherwise a keyboard visitor is still
-    // "inside" the day button behind the overlay and cannot reach Close.
-    var closeBtn = document.getElementById("modalCloseBtn");
-    if (closeBtn) closeBtn.focus();
   }
 
   function buildEventItem(ev) {
@@ -371,16 +264,8 @@
 
   function closeDayModal() {
     var overlay = document.getElementById("dayModalOverlay");
-    if (!overlay.classList.contains("open")) return;
     overlay.classList.remove("open");
     overlay.setAttribute("aria-hidden", "true");
-
-    // Put focus back on the day that was opened, so keyboard users keep
-    // their place in the month instead of starting over at the top.
-    if (dayModalReturnFocus && dayModalReturnFocus.isConnected) {
-      dayModalReturnFocus.focus();
-    }
-    dayModalReturnFocus = null;
   }
 
   function init() {
@@ -404,67 +289,14 @@
     var listBtn = document.getElementById("listViewBtn");
     if (monthBtn) monthBtn.addEventListener("click", function () { setView("month"); });
     if (listBtn) listBtn.addEventListener("click", function () { setView("list"); });
-
-    // Arrow keys move between days, Home/End jump to the ends of the week.
-    // Tab moves out of the grid instead of stepping through thirty buttons.
-    document.getElementById("calendarGrid").addEventListener("keydown", function (e) {
-      if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"].indexOf(e.key) === -1) return;
-
-      var btn = e.target;
-      if (!btn || !btn.parentNode || btn.parentNode.getAttribute("role") !== "gridcell") return;
-
-      var cell = btn.parentNode;
-      var rowEl = cell.parentNode;
-      var rows = Array.prototype.slice.call(this.querySelectorAll(".calendar-row")).slice(1);
-      var rowIndex = rows.indexOf(rowEl);
-      var col = Array.prototype.indexOf.call(rowEl.children, cell);
-      if (rowIndex === -1) return;
-
-      e.preventDefault();
-
-      var target = null;
-
-      if (e.key === "Home" || e.key === "End") {
-        var cells = Array.prototype.slice.call(rowEl.children);
-        if (e.key === "End") cells.reverse();
-        for (var i = 0; i < cells.length; i++) {
-          var found = cells[i].querySelector(".calendar-day");
-          if (found) { target = found; break; }
-        }
-      } else {
-        var nextRow = rowIndex + (e.key === "ArrowUp" ? -1 : e.key === "ArrowDown" ? 1 : 0);
-        var nextCol = col + (e.key === "ArrowLeft" ? -1 : e.key === "ArrowRight" ? 1 : 0);
-        var rowNode = rows[nextRow];
-        var cellNode = rowNode && rowNode.children[nextCol];
-        target = cellNode ? cellNode.querySelector(".calendar-day") : null;
-      }
-
-      if (target) focusGridDay(target);
-    });
-
     document.getElementById("modalCloseBtn").addEventListener("click", closeDayModal);
     document.getElementById("dayModalOverlay").addEventListener("click", function (e) {
       if (e.target === this) closeDayModal();
     });
 
-    // Escape closes the day dialog and Tab stays inside it: Close is its
-    // only control, so focus must not wander off behind the overlay.
-    document.addEventListener("keydown", function (e) {
-      if (!document.getElementById("dayModalOverlay").classList.contains("open")) return;
-      if (e.key === "Escape") {
-        e.preventDefault();
-        closeDayModal();
-      } else if (e.key === "Tab") {
-        e.preventDefault();
-        var closeBtn = document.getElementById("modalCloseBtn");
-        if (closeBtn) closeBtn.focus();
-      }
-    });
-
     render();
     fetchPublishedEvents().then(function (events) {
       state.publishedEvents = Array.isArray(events) ? events : [];
-      state.closures = closuresFrom(state.publishedEvents);
       render();
     });
   }

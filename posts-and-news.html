@@ -30,7 +30,7 @@
         <img src="assets/logos/ECC_logo.jpg" alt="" aria-hidden="true" width="32" height="32" style="height:32px;width:auto;display:inline-block;vertical-align:middle;margin-right:8px;">
         <span class="gold-text">Etobicoke Chess Club</span>
       </a>
-      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="primaryNav" aria-label="Open menu">&#9776;</button>
+      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="primaryNav" aria-label="Toggle menu">&#9776;</button>
       <nav class="nav-links" id="primaryNav" aria-label="Main Navigation">
         <a href="./" class="nav-item">Home</a>
         <a href="about" class="nav-item">About Us</a>
@@ -111,8 +111,7 @@
       <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
     <p>&copy; 2026 Etobicoke Chess Club Inc. All rights reserved.  Incorporated federally in Canada.<br>
-    Affiliated Platforms: <a href="https://www.chess.ca/en/">CFC</a> &bull; <a href="https://www.fide.com/">FIDE</a><br>
-    <a href="privacy">Privacy Policy</a> &bull; <a href="accessibility">Accessibility</a></p>
+    Affiliated Platforms: <a href="https://www.chess.ca/en/">CFC</a> &bull; <a href="https://www.fide.com/">FIDE</a></p>
     <p class="last-updated">Last updated: <span id="lastUpdatedText">July 28, 2026</span></p>
   </div>
 </footer>
@@ -121,6 +120,13 @@
 <script src="assets/theme.js"></script>
 <script src="assets/share.js"></script>
 <script src="assets/last-updated.js"></script>
-<script src="assets/nav.js"></script>
+<script>
+  var navToggle = document.getElementById('navToggle');
+  var primaryNav = document.getElementById('primaryNav');
+  navToggle.addEventListener('click', function () {
+    var isOpen = primaryNav.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', isOpen);
+  });
+</script>
 </body>
 </html>
