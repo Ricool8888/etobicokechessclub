@@ -262,6 +262,9 @@
       var isActive = b === match;
       b.classList.toggle("active", isActive);
       b.setAttribute("aria-selected", isActive ? "true" : "false");
+      // Only the selected tab is in the tab order; the arrow keys move
+      // between tabs, as the ARIA tabs pattern expects.
+      b.tabIndex = isActive ? 0 : -1;
     });
     state.activeTab = match.getAttribute("data-tab");
     render();
@@ -272,13 +275,36 @@
   }
 
   function init() {
-    document.querySelectorAll(".tab-btn").forEach(function (btn) {
+    var tabs = Array.prototype.slice.call(document.querySelectorAll(".tab-btn"));
+
+    tabs.forEach(function (btn) {
       btn.addEventListener("click", function () {
         var name = btn.getAttribute("data-tab");
         history.replaceState(null, "", name === "upcoming"
           ? window.location.pathname + window.location.search
           : "#" + name);
         selectTab(name);
+      });
+
+      // Arrow keys walk the tabs, Home/End jump to the ends. Moving focus
+      // also selects, matching how the tabs behave when clicked.
+      btn.addEventListener("keydown", function (e) {
+        var index = tabs.indexOf(btn);
+        var next = null;
+
+        if (e.key === "ArrowRight" || e.key === "ArrowDown") next = (index + 1) % tabs.length;
+        else if (e.key === "ArrowLeft" || e.key === "ArrowUp") next = (index - 1 + tabs.length) % tabs.length;
+        else if (e.key === "Home") next = 0;
+        else if (e.key === "End") next = tabs.length - 1;
+        else return;
+
+        e.preventDefault();
+        var target = tabs[next];
+        target.focus();
+        history.replaceState(null, "", target.getAttribute("data-tab") === "upcoming"
+          ? window.location.pathname + window.location.search
+          : "#" + target.getAttribute("data-tab"));
+        selectTab(target.getAttribute("data-tab"));
       });
     });
 

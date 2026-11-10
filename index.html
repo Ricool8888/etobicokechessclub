@@ -78,7 +78,7 @@
         <img src="assets/logos/ECC_logo.jpg" alt="" aria-hidden="true" width="32" height="32" style="height:32px;width:auto;display:inline-block;vertical-align:middle;margin-right:8px;">
         <span class="gold-text">Etobicoke Chess Club</span>
       </a>
-      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="primaryNav" aria-label="Toggle menu">&#9776;</button>
+      <button class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="primaryNav" aria-label="Open menu">&#9776;</button>
       <nav class="nav-links" id="primaryNav" aria-label="Main Navigation">
         <a href="./" class="nav-item active" aria-current="page">Home</a>
         <a href="about" class="nav-item">About Us</a>
@@ -109,6 +109,12 @@
           <a href="events-calendar" class="btn-primary">View Events Calendar</a>
           <a href="posts-and-news" class="btn-secondary">Read Club News</a>
         </div>
+        <div class="contact-save">
+          <a href="assets/downloads/etobicoke-chess-club.vcf" class="btn-secondary contact-save-btn" download="Etobicoke Chess Club.vcf" aria-describedby="contactSaveHint">
+            <span aria-hidden="true">&#128222;</span> Save Club to My Contacts
+          </a>
+          <p class="contact-save-hint" id="contactSaveHint">Adds our email, Friday meeting time and the Second Cup address to your phone&rsquo;s address book.</p>
+        </div>
       </div>
 
       <aside class="meeting-card" aria-label="Weekly meeting details">
@@ -132,7 +138,10 @@
               Second Cup
               <span class="address-sub">265 Wincott Dr, Etobicoke, M9A 2T2</span>
             </address>
-            <iframe class="meeting-map" loading="lazy" title="Map to Second Cup" src="https://www.google.com/maps?q=Second+Cup,+265+Wincott+Dr,+Etobicoke,+ON+M9A+2T2&amp;output=embed"></iframe>
+            <button type="button" class="map-facade" data-map-facade data-map-title="Map to Second Cup, 265 Wincott Dr" data-map-src="https://www.google.com/maps?q=Second+Cup,+265+Wincott+Dr,+Etobicoke,+ON+M9A+2T2&amp;output=embed" aria-label="Show map to Second Cup, 265 Wincott Dr">
+              <span class="map-facade-icon" aria-hidden="true">&#128506;</span>
+              <span>Show map</span>
+            </button>
             <a class="map-link" href="https://www.google.com/maps/search/?api=1&amp;query=Second+Cup+265+Wincott+Dr+Etobicoke+ON+M9A+2T2" target="_blank" rel="noopener noreferrer">Open in Google Maps &rarr;</a>
           </div>
         </div>
@@ -192,13 +201,24 @@
           <h3 class="puzzle-title">Live Games</h3>
           <p>Watch top-rated games being played right now on <a href="https://lichess.org/tv" target="_blank" rel="noopener noreferrer">Lichess TV</a>.</p>
           <div class="live-game">
-            <iframe class="puzzle-frame" data-lichess-frame="tv" title="Lichess TV live game" loading="lazy" src="https://lichess.org/tv/frame?theme=brown&amp;bg=dark" allowtransparency="true" frameborder="0"></iframe>
-            <div class="eval-bar" id="evalBar" role="img" aria-label="Engine evaluation loading">
+            <!-- A plain link until someone asks for the board, so the Lichess
+                 TV embed and its live socket are not downloaded on every
+                 visit. See assets/live-game.js. -->
+            <a class="tv-facade" href="https://lichess.org/tv" data-tv-facade>
+              <span class="tv-facade-icon" aria-hidden="true">&#9816;</span>
+              <span class="tv-facade-title">Watch live games</span>
+              <span class="tv-facade-note">Loads the Lichess TV board here, or opens lichess.org</span>
+            </a>
+            <div class="eval-bar is-off" id="evalBar" role="img" aria-label="Engine evaluation" aria-hidden="true">
               <div class="eval-bar-white"></div>
               <span class="eval-bar-label" aria-hidden="true"></span>
             </div>
             <p class="live-game-paused-note" hidden>Live game paused</p>
-            <button type="button" class="puzzle-btn live-game-pause" id="liveGamePause">Pause live game</button>
+            <div class="live-game-actions">
+              <button type="button" class="puzzle-btn live-game-pause" id="liveGamePause">Pause live game</button>
+              <button type="button" class="puzzle-btn live-game-eval" id="liveEvalToggle" aria-pressed="false">Show evaluation</button>
+            </div>
+            <p class="muted-note live-game-fallback">Board not loading? <a href="https://lichess.org/tv" target="_blank" rel="noopener noreferrer">Watch Lichess TV on lichess.org</a>.</p>
           </div>
         </div>
       </div>
@@ -231,59 +251,20 @@
       <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
     </button>
     <p>&copy; 2026 Etobicoke Chess Club Inc. All rights reserved.  Incorporated federally in Canada.<br>
-    Affiliated Platforms: <a href="https://www.chess.ca/en/">CFC</a> &bull; <a href="https://www.fide.com/">FIDE</a></p>
+    Affiliated Platforms: <a href="https://www.chess.ca/en/">CFC</a> &bull; <a href="https://www.fide.com/">FIDE</a><br>
+    <a href="privacy">Privacy Policy</a> &bull; <a href="accessibility">Accessibility</a></p>
     <p class="last-updated">Last updated: <span id="lastUpdatedText">July 28, 2026</span></p>
   </div>
 </footer>
 
 <script type="module" src="assets/puzzle.js"></script>
 <script src="assets/live-eval.js"></script>
+<script src="assets/live-game.js"></script>
+<script src="assets/map-facade.js"></script>
 <script src="assets/theme.js"></script>
 <script src="assets/share.js"></script>
-<script>
-  // Match the Lichess TV embed's background to the site theme (light/dark toggle).
-  (function () {
-    var frames = document.querySelectorAll('[data-lichess-frame]');
-    if (!frames.length) return;
-    function syncLichessTheme() {
-      var bg = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
-      frames.forEach(function (frame) {
-        if (frame.hasAttribute('data-paused')) return;
-        var src = 'https://lichess.org/' + frame.getAttribute('data-lichess-frame') + '/frame?theme=brown&bg=' + bg;
-        if (frame.src !== src) frame.src = src;
-      });
-    }
-    syncLichessTheme();
-
-    // Lets visitors stop the moving board and evaluation bar.
-    var pauseBtn = document.getElementById('liveGamePause');
-    if (pauseBtn) {
-      var liveGame = pauseBtn.closest('.live-game');
-      var liveFrame = liveGame.querySelector('[data-lichess-frame]');
-      var pausedNote = liveGame.querySelector('.live-game-paused-note');
-      pauseBtn.addEventListener('click', function () {
-        var paused = !liveFrame.hasAttribute('data-paused');
-        liveFrame.toggleAttribute('data-paused', paused);
-        liveGame.classList.toggle('is-paused', paused);
-        pausedNote.hidden = !paused;
-        pauseBtn.textContent = paused ? 'Resume live game' : 'Pause live game';
-        if (paused) liveFrame.src = 'about:blank'; else syncLichessTheme();
-        if (window.GCCLiveEval) window.GCCLiveEval.setPaused(paused);
-      });
-    }
-
-    new MutationObserver(syncLichessTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-  })();
-</script>
 <script src="assets/last-updated.js"></script>
 <script src="assets/banner.js"></script>
-<script>
-  var navToggle = document.getElementById('navToggle');
-  var primaryNav = document.getElementById('primaryNav');
-  navToggle.addEventListener('click', function () {
-    var isOpen = primaryNav.classList.toggle('open');
-    navToggle.setAttribute('aria-expanded', isOpen);
-  });
-</script>
+<script src="assets/nav.js"></script>
 </body>
 </html>
