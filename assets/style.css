@@ -308,6 +308,22 @@ a { color: var(--chess-green); }
   .btn-group { flex-direction: row; }
 }
 
+/* "Save Club to My Contacts" (.vcf) under the hero buttons. */
+.contact-save { margin-top: 20px; }
+
+.contact-save-btn {
+  font-size: 15px;
+  padding: 9px 18px;
+}
+
+.contact-save-btn span[aria-hidden] { margin-right: 6px; }
+
+.contact-save-hint {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--slate-300);
+}
+
 .btn-primary {
   display: inline-block;
   background-color: var(--gold);
@@ -420,6 +436,33 @@ a { color: var(--chess-green); }
   display: block;
 }
 
+/* The map button that becomes an iframe when clicked (see map-facade.js).
+   It keeps the iframe's 160px box, so the card does not move when the map
+   loads. */
+.map-facade {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 160px;
+  margin-top: 12px;
+  padding: 0;
+  border: 1px dashed var(--gold-30);
+  border-radius: 10px;
+  background: var(--gold-10);
+  color: var(--slate-300);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.map-facade:hover { background: var(--gold-20); color: var(--white); }
+.map-facade-icon { font-size: 18px; }
+@media (prefers-reduced-motion: reduce) { .map-facade { transition: none; } }
+
 .btn-rsvp {
   display: block;
   width: 100%;
@@ -442,6 +485,34 @@ a { color: var(--chess-green); }
 .page-header { padding: 56px 0 24px; }
 .page-title { font-size: 36px; font-weight: 800; color: var(--white); margin-bottom: 12px; }
 .page-desc { font-size: 17px; color: var(--slate-300); max-width: 720px; }
+
+/* Privacy policy and accessibility pages: the policy date, bullet lists and
+   the closing address block, using the same cards as the rest of the site. */
+.policy-meta {
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--slate-400);
+}
+
+.content-card ul {
+  margin: 0 0 14px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: var(--slate-300);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.content-card ul:last-child { margin-bottom: 0; }
+.content-card li::marker { color: var(--gold); }
+.content-card li strong { color: var(--white); }
+
+.content-card .policy-contact {
+  margin-top: 14px;
+  color: var(--slate-200);
+  font-weight: 600;
+}
 
 /* Social */
 .social-container {
@@ -692,11 +763,21 @@ html[data-theme="light"] .theme-toggle .icon-moon { display: none; }
   }
 }
 
-.calendar-grid {
+/* The month is built as ARIA grid rows (see calendar.js), so the rows carry
+   the seven columns and the grid itself is a plain block. */
+.calendar-grid { display: block; }
+
+.calendar-row {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 6px;
 }
+
+.calendar-row + .calendar-row { margin-top: 6px; }
+
+.calendar-row > [role="gridcell"] { min-width: 0; }
+
+.calendar-row .calendar-day { width: 100%; }
 
 .calendar-weekday {
   text-align: center;
@@ -731,6 +812,7 @@ html[data-theme="light"] .theme-toggle .icon-moon { display: none; }
 .calendar-day.day-tuesday-meeting .day-number { color: var(--chess-green); }
 .calendar-day.day-friday-meeting .day-number { color: var(--friday-accent); }
 .calendar-day.day-special-event .day-number { color: var(--gold); }
+.calendar-day.day-closed .day-number { color: var(--slate-400); text-decoration: line-through; }
 
 .day-event-dot {
   font-size: 11px;
@@ -746,6 +828,26 @@ html[data-theme="light"] .theme-toggle .icon-moon { display: none; }
 
 .day-event-dot.recurring { background: rgba(129, 182, 76, 0.1); border-color: rgba(129, 182, 76, 0.35); color: var(--chess-green); }
 .day-event-dot.recurring-alt { background: rgba(56, 189, 248, 0.1); border-color: rgba(56, 189, 248, 0.35); color: var(--friday-accent); }
+.day-event-dot.closed { background: transparent; border-color: var(--slate-600); color: var(--slate-400); }
+
+/* A closed day is marked with an X, not a coloured dot: an X keeps its meaning
+   without colour, and no other kind of day uses that shape. */
+.calendar-day.day-closed::before,
+.calendar-day.day-closed::after {
+  content: "";
+  width: 11px;
+  height: 0;
+  background: transparent;
+  border: 0;
+  border-top: 2px solid var(--slate-400);
+  box-sizing: border-box;
+  position: absolute;
+  top: 15px;
+  right: 8.5px;
+}
+
+.calendar-day.day-closed::before { transform: rotate(45deg); }
+.calendar-day.day-closed::after { transform: rotate(-45deg); }
 
 @media (max-width: 640px) {
   .calendar-day { min-height: 56px; padding: 6px; }
@@ -760,6 +862,23 @@ html[data-theme="light"] .theme-toggle .icon-moon { display: none; }
   .calendar-day.day-tuesday-meeting::after { background: var(--chess-green); }
   .calendar-day.day-friday-meeting::after { background: var(--friday-accent); }
   .calendar-day.day-special-event::after { background: var(--gold); }
+
+  /* Narrow cells have no room beside a two-digit number, so the X sits below
+     the digits. Every property of the dot marker above is reset here, so the
+     X does not inherit its 6px gold circle. */
+  .calendar-day.day-closed::before,
+  .calendar-day.day-closed::after {
+    top: auto;
+    right: auto;
+    bottom: 12px;
+    left: 5.5px;
+    width: 11px;
+    height: 0;
+    border-radius: 0;
+    background: transparent;
+    border: 0;
+    border-top: 2px solid var(--slate-400);
+  }
 }
 
 /* Modal (day detail / add event / add post) */
@@ -862,6 +981,20 @@ html[data-theme="light"] .theme-toggle .icon-moon { display: none; }
 .legend-dot-tuesday { background: var(--chess-green); }
 .legend-dot-friday { background: var(--friday-accent); }
 .legend-dot-special { background: var(--gold); }
+.legend-dot-closed { background: transparent; position: relative; }
+.legend-dot-closed::before,
+.legend-dot-closed::after {
+  content: "";
+  width: 11px;
+  height: 0;
+  border-top: 2px solid var(--slate-400);
+  box-sizing: border-box;
+  position: absolute;
+  top: 4px;
+  left: -0.5px;
+}
+.legend-dot-closed::before { transform: rotate(45deg); }
+.legend-dot-closed::after { transform: rotate(-45deg); }
 
 .add-to-calendar-row {
   display: flex;
@@ -1681,6 +1814,7 @@ html[data-theme="light"] {
 .calendar-list-tuesday { border-left-color: var(--chess-green); }
 .calendar-list-friday { border-left-color: var(--friday-accent); }
 .calendar-list-special { border-left-color: var(--gold); }
+.calendar-list-closed { border-left-color: var(--slate-400); }
 .calendar-list-tuesday .ev-time { color: var(--chess-green); }
 .calendar-list-friday .ev-time { color: var(--friday-accent); }
 
@@ -1728,7 +1862,54 @@ html[data-theme="light"] {
 
 .live-game .puzzle-frame { margin: 0; max-width: none; }
 
-.live-game-pause { margin-top: 10px; }
+/*
+ * The Lichess TV panel before the board is loaded (see live-game.js). It is a
+ * link to lichess.org/tv, so it still works with scripts off, and it holds the
+ * board's 10:11 box so nothing moves when the embed replaces it.
+ */
+.tv-facade {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  aspect-ratio: 10 / 11;
+  padding: 12px;
+  border: 1px dashed var(--gold-30);
+  border-radius: 8px;
+  background: var(--gold-10);
+  color: var(--slate-300);
+  text-align: center;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.tv-facade:hover { background: var(--gold-20); color: var(--white); }
+.tv-facade-icon { font-size: 44px; line-height: 1; color: var(--gold); }
+.tv-facade-title { font-size: 16px; font-weight: 700; color: var(--white); }
+.tv-facade-note { font-size: 12px; }
+@media (prefers-reduced-motion: reduce) { .tv-facade { transition: none; } }
+
+.live-game-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.live-game-actions .puzzle-btn { margin-top: 0; }
+
+/* Until the visitor loads the board there is nothing to pause or evaluate,
+   so those buttons stay out of the way (live-game.js adds .is-loaded). */
+.live-game:not(.is-loaded) .live-game-actions { display: none; }
+
+/* The evaluation bar is only fetched and drawn after "Show evaluation". */
+.eval-bar.is-off { display: none; }
+
+/* The "board not loading?" link only makes sense once a board was asked for. */
+.content-card .live-game-fallback { display: none; margin: 10px 0 0; text-align: center; }
+.live-game.is-loaded .live-game-fallback { display: block; }
 
 /* Paused: the embed is unloaded and a note sits where its board was. */
 .live-game.is-paused .puzzle-frame { visibility: hidden; }
@@ -2260,5 +2441,9 @@ html[data-theme="light"] {
 }
 
 a.btn-calendar { text-decoration: none; }
+
+.site-footer a { color: var(--gold); text-decoration: none; }
+.site-footer a:hover { text-decoration: underline; }
+
 .map-link { display: inline-block; margin-top: 10px; font-size: 14px; font-weight: 600; color: var(--chess-green); text-decoration: none; }
 .map-link:hover { text-decoration: underline; }

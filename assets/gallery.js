@@ -162,6 +162,11 @@
   }
 
   /*
+   * The card that opened the lightbox, so focus can return to it.
+   */
+  var returnFocusTo = null;
+
+  /*
    * Open the full-size photo lightbox.
    */
   function openLightbox(photo) {
@@ -193,6 +198,20 @@
       "aria-hidden",
       "false"
     );
+
+    /*
+     * Remember the photo card so focus can go back to it on close,
+     * and move focus to Close: otherwise a keyboard visitor is left
+     * on the card behind the overlay.
+     */
+    returnFocusTo = document.activeElement;
+
+    var closeBtn =
+      document.getElementById("lightboxCloseBtn");
+
+    if (closeBtn) {
+      closeBtn.focus();
+    }
   }
 
   /*
@@ -202,12 +221,26 @@
     var overlay =
       document.getElementById("lightboxOverlay");
 
+    if (!overlay || !overlay.classList.contains("open")) {
+      return;
+    }
+
     overlay.classList.remove("open");
 
     overlay.setAttribute(
       "aria-hidden",
       "true"
     );
+
+    /*
+     * Put focus back on the photo that was opened, so keyboard
+     * users keep their place in the grid.
+     */
+    if (returnFocusTo && returnFocusTo.isConnected) {
+      returnFocusTo.focus();
+    }
+
+    returnFocusTo = null;
   }
 
   /*
@@ -539,13 +572,24 @@
     }
 
     /*
-     * Allow Escape to close the lightbox.
+     * Escape closes the lightbox and Tab stays inside it: the image
+     * and its caption are text, so Close is the only control.
      */
     document.addEventListener(
       "keydown",
       function (e) {
+        if (!lightboxOverlay || !lightboxOverlay.classList.contains("open")) {
+          return;
+        }
+
         if (e.key === "Escape") {
           closeLightbox();
+        } else if (e.key === "Tab") {
+          e.preventDefault();
+
+          if (lightboxCloseBtn) {
+            lightboxCloseBtn.focus();
+          }
         }
       }
     );
